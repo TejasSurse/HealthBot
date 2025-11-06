@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthBot - AI Medical Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: white;
+            background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%236b7280' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E<path stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2rem !important;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            background-color: #006aff;
+            border: 6px solid #c0dfff;
+            color: white;
+            gap: 8px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: auto;
+        }
+
+        .text {
+            font-size: 1.3em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .svg {
+            padding-top: 5px;
+        }
+
+        .button:hover {
+            border: 6px solid #b1d8ff;
+            background-color: #1b7aff;
+        }
+
+        .button:hover .svg svg {
+            animation: jello-vertical 0.9s both;
+            transform-origin: left;
+        }
+
+        @keyframes jello-vertical {
+            0% { transform: scale3d(1, 1, 1); }
+            30% { transform: scale3d(0.75, 1.25, 1); }
+            40% { transform: scale3d(1.25, 0.75, 1); }
+            50% { transform: scale3d(0.85, 1.15, 1); }
+            65% { transform: scale3d(1.05, 0.95, 1); }
+            75% { transform: scale3d(0.95, 1.05, 1); }
+            100% { transform: scale3d(1, 1, 1); }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-10">
+    <header class="text-center mb-8 fade-in">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-2 tracking-tight">HealthBot</h1>
+        <p class="text-gray-700 text-base md:text-lg max-w-xl mx-auto">
+            Your personal AI health assistant. Fill in your details below to get an instant wellness report.
+        </p>
+    </header>
+
+    <section class="glass p-8 rounded-2xl w-full max-w-lg fade-in">
+        <form action="/analyze" method="POST" class="space-y-6">
+
+            <div>
+                <h2 class="text-lg font-semibold text-blue-700 mb-3 border-b pb-1">Basic Information</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-gray-800 font-semibold mb-1">Full Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-gray-800 font-semibold mb-1">Age <span class="text-red-500">*</span></label>
+                            <input type="number" name="age" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-800 font-semibold mb-1">Gender <span class="text-red-500">*</span></label>
+                            <select name="gender" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                                <option value="" disabled selected>Select</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-800 font-semibold mb-1">Contact Details</label>
+                        <input type="text" name="contact" placeholder="Email or Phone" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold text-blue-700 mb-3 border-b pb-1">What are you experiencing?</h2>
+                <textarea name="symptoms" rows="3" required placeholder="Describe your current health issue..." class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"></textarea>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold text-blue-700 mb-3 border-b pb-1">Health Background</h2>
+                <textarea name="medicalHistory" rows="3" placeholder="Long-term issues, allergies..." class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"></textarea>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold text-blue-700 mb-3 border-b pb-1">Vital Signs</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input type="text" name="temperature" placeholder="Temperature (°C)" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                    <input type="text" name="pulse" placeholder="Pulse (bpm)" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                    <input type="text" name="bp" placeholder="BP (e.g. 120/80)" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                    <input type="text" name="weight" placeholder="Weight (kg)" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-800 font-semibold mb-1">Preferred Language <span class="text-red-500">*</span></label>
+                <select name="language" required class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                    <option value="" disabled selected>Select</option>
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Marathi">Marathi</option>
+                </select>
+            </div>
+
+            <div class="pt-4 text-center">
+                <button type="submit" class="button">
+                    <span class="text">Generate Report</span>
+                    <span class="svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="20" viewBox="0 0 38 15" fill="none">
+                            <path fill="white" d="M10 7.519l-.939-.344h0l.939.344zm14.386-1.205l-.981-.192.981.192zm1.276 5.509l.537.843.148-.094.107-.139-.792-.611zm4.819-4.304l-.385-.923h0l.385.923zm7.227.707a1 1 0 0 0 0-1.414L31.343.448a1 1 0 0 0-1.414 0 1 1 0 0 0 0 1.414l5.657 5.657-5.657 5.657a1 1 0 0 0 1.414 1.414l6.364-6.364zM1 7.519l.554.833.029-.019.094-.061.361-.23 1.277-.77c1.054-.609 2.397-1.32 3.629-1.787.617-.234 1.17-.392 1.623-.455.477-.066.707-.008.788.034.025.013.031.021.039.034a.56.56 0 0 1 .058.235c.029.327-.047.906-.39 1.842l1.878.689c.383-1.044.571-1.949.505-2.705-.072-.815-.45-1.493-1.16-1.865-.627-.329-1.358-.332-1.993-.244-.659.092-1.367.305-2.056.566-1.381.523-2.833 1.297-3.921 1.925l-1.341.808-.385.245-.104.068-.028.018c-.011.007-.011.007.543.84zm8.061-.344c-.198.54-.328 1.038-.36 1.484-.032.441.024.94.325 1.364.319.45.786.64 1.21.697.403.054.824-.001 1.21-.09.775-.179 1.694-.566 2.633-1.014l3.023-1.554c2.115-1.122 4.107-2.168 5.476-2.524.329-.086.573-.117.742-.115s.195.038.161.014c-.15-.105.085-.139-.076.685l1.963.384c.192-.98.152-2.083-.74-2.707-.405-.283-.868-.37-1.28-.376s-.849.069-1.274.179c-1.65.43-3.888 1.621-5.909 2.693l-2.948 1.517c-.92.439-1.673.743-2.221.87-.276.064-.429.065-.492.057-.043-.006.066.003.155.127.07.099.024.131.038-.063.014-.187.078-.49.243-.94l-1.878-.689zm14.343-1.053c-.361 1.844-.474 3.185-.413 4.161.059.95.294 1.72.811 2.215.567.544 1.242.546 1.664.459a2.34 2.34 0 0 0 .502-.167l.15-.076.049-.028.018-.011c.013-.008.013-.008-.524-.852l-.536-.844.019-.012c-.038.018-.064.027-.084.032-.037.008.053-.013.125.056.021.02-.151-.135-.198-.895-.046-.734.034-1.887.38-3.652l-1.963-.384zm2.257 5.701l.791.611.024-.031.08-.101.311-.377 1.093-1.213c.922-.954 2.005-1.894 2.904-2.27l-.771-1.846c-1.31.547-2.637 1.758-3.572 2.725l-1.184 1.314-.341.414-.093.117-.025.032c-.01.013-.01.013.781.624zm5.204-3.381c.989-.413 1.791-.42 2.697-.307.871.108 2.083.385 3.437.385v-2c-1.197 0-2.041-.226-3.19-.369-1.114-.139-2.297-.146-3.715.447l.771 1.846z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <footer class="mt-10 text-center text-gray-600 text-sm fade-in">
+        <p class="mt-1 italic text-gray-500">
+            This health report is AI-generated. Please consult a certified medical specialist.
+        </p>
+    </footer>
+</body>
+
+</html>

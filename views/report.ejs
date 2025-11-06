@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Report - <%= patient.name %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f8fafc, #e0f2fe); }
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    .btn-gradient { background: linear-gradient(to right, #2563eb, #0ea5e9); }
+    .btn-gradient:hover { background: linear-gradient(to right, #1d4ed8, #0284c7); }
+    .fade-in { animation: fadeIn 0.8s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="min-h-screen py-10 px-4">
+
+  <!-- MAIN REPORT CONTENT (FOR PDF) -->
+  <div id="report-content" class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-blue-700">HealthBot Report</h1>
+      <p class="text-gray-600 mt-2">AI-Powered Health Insights • For Informational Use Only</p>
+    </div>
+
+    <!-- Report Card -->
+    <div class="glass p-8 rounded-2xl fade-in">
+
+      <!-- Patient Info -->
+      <section class="mb-8 border-b pb-6">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-4">Patient Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+          <p><strong>Name:</strong> <%= patient.name %></p>
+          <p><strong>Age:</strong> <%= patient.age %></p>
+          <p><strong>Gender:</strong> <%= patient.gender %></p>
+          <p><strong>Language:</strong> <%= patient.language %></p>
+          <% if (patient.contact) { %>
+            <p><strong>Contact:</strong> <%= patient.contact %></p>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Symptoms -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Reported Symptoms</h2>
+        <p class="bg-gray-50 p-4 rounded-lg text-gray-800"><%= input.symptoms %></p>
+      </section>
+
+      <!-- AI Health Report -->
+      <section class="mb-8 space-y-6">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-4">AI Health Analysis</h2>
+
+        <!-- Summary -->
+        <div class="bg-blue-50 p-5 rounded-xl">
+          <h3 class="font-semibold text-blue-900 mb-2">Summary</h3>
+          <p class="text-blue-800"><%= report.summary || "No summary available." %></p>
+        </div>
+
+        <!-- Risk Level -->
+        <div class="flex items-center gap-3">
+          <span class="font-semibold text-gray-700">Risk Level:</span>
+          <span class="px-4 py-1 rounded-full text-white text-sm font-bold
+            <%= report.riskLevel === 'High' ? 'bg-red-500' : 
+                report.riskLevel === 'Moderate' ? 'bg-orange-500' : 'bg-green-500' %>">
+            <%= report.riskLevel || "Unknown" %>
+          </span>
+        </div>
+
+        <!-- Causes -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2">Possible Causes</h3>
+          <ul class="list-disc list-inside text-gray-700 space-y-1">
+            <% (report.possibleCauses || []).forEach(cause => { %>
+              <li><%= cause %></li>
+            <% }); %>
+          </ul>
+        </div>
+
+        <!-- Precautions -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2">Precautions</h3>
+          <ul class="list-disc list-inside text-gray-700 space-y-1">
+            <% (report.precautions || []).forEach(p => { %>
+              <li><%= p %></li>
+            <% }); %>
+          </ul>
+        </div>
+
+        <!-- Safe Medications -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2">Safe Over-the-Counter Suggestions</h3>
+          <div class="flex flex-wrap gap-2">
+            <% (report.safeMedications || []).forEach(med => { %>
+              <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm"><%= med %></span>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Diet Plan -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-3">7-Day Diet Plan</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <% Object.keys(report.dietPlan || {}).slice(0, 7).forEach(day => { %>
+              <div class="border rounded-lg p-3 bg-gray-50">
+                <div class="font-semibold text-blue-700"><%= day.toUpperCase() %></div>
+                <div class="mt-1 space-y-1 text-gray-600">
+                  <div><strong>Breakfast:</strong> <%= report.dietPlan[day].breakfast %></div>
+                  <div><strong>Lunch:</strong> <%= report.dietPlan[day].lunch %></div>
+                  <div><strong>Dinner:</strong> <%= report.dietPlan[day].dinner %></div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-2">Recommended Next Steps</h3>
+          <ul class="list-decimal list-inside text-gray-700 space-y-1">
+            <% (report.nextSteps || []).forEach(step => { %>
+              <li><%= step %></li>
+            <% }); %>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS (Outside PDF) -->
+  <div class="text-center mt-8 space-x-4">
+    <!-- Download Button -->
+
+    
+    <a href="/" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-8 py-3 rounded-lg font-semibold shadow-md transition hover:scale-105">
+      New Report
+    </a>
+  </div>
+
+  <!-- DISCLAIMER (NOT IN PDF) -->
+  <div class="max-w-4xl mx-auto mt-10 bg-amber-50 border border-amber-200 text-amber-900 p-6 rounded-lg text-sm text-center">
+    <strong>Important:</strong> This AI-generated report is for <u>informational purposes only</u>. 
+    It is <strong>not a substitute</strong> for professional medical advice. 
+    Always consult a qualified doctor before acting on any health information.
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</body>
+</html>
