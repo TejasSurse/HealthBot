@@ -2,10 +2,10 @@
 import mysql from "mysql2/promise";
 
 const pool = mysql.createPool({
-  host: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
+  host: "<>",
   port: 4000,
-  user: "4EYmJTz3qoD4Nv2.root",
-  password: "jpduR0LNzgU1aM3I",
+  user: "<>",
+  password: "<>",
   database: "healthbotsys",
   waitForConnections: true,
   connectionLimit: 10,
