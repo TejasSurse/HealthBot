@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthBot - Step Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+      transition: all 0.4s;
+    }
+
+    .hidden-step {
+      display: none;
+    }
+
+    .fade {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .next-btn {
+      padding: 10px 20px;
+      background: #006aff;
+      color: white;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .next-btn:hover {
+      background: #1b7aff;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+  <header class="text-center mb-10 fade">
+    <h1 class="text-4xl font-bold text-blue-700">HealthBot</h1>
+    <p class="text-gray-700 mt-2">Your personal AI medical assistant</p>
+  </header>
+
+  <form action="/analyze" method="POST" enctype="multipart/form-data" class="w-full max-w-xl space-y-6">
+
+    <!-- STEP 1 -->
+    <div id="step-1" class="glass p-6 rounded-xl fade">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Basic Information</h2>
+
+      <div class="space-y-3">
+        <input type="text" name="name" placeholder="Full Name *" required class="w-full border rounded-lg p-2" />
+        <input type="number" name="age" placeholder="Age *" required class="w-full border rounded-lg p-2" />
+
+        <select name="gender" required class="w-full border rounded-lg p-2">
+          <option value="" disabled selected>Gender *</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+
+        <input type="text" name="contact" placeholder="Contact (Phone / Email)" class="w-full border rounded-lg p-2" />
+      </div>
+
+      <button type="button" onclick="nextStep(1)" class="next-btn mt-4">Next</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step-2" class="glass p-6 rounded-xl fade hidden-step">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Describe Your Symptoms *</h2>
+
+      <textarea name="symptoms" rows="3" required placeholder="Describe your issue..."
+        class="w-full border rounded-lg p-2"></textarea>
+
+      <button type="button" onclick="nextStep(2)" class="next-btn mt-4">Next</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step-3" class="glass p-6 rounded-xl fade hidden-step">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Medical History</h2>
+
+      <textarea name="medicalHistory" rows="3" placeholder="Past issues, allergies, surgeries..."
+        class="w-full border rounded-lg p-2"></textarea>
+
+      <button type="button" onclick="nextStep(3)" class="next-btn mt-4">Next</button>
+    </div>
+
+    <!-- STEP 4 -->
+    <div id="step-4" class="glass p-6 rounded-xl fade hidden-step">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Vital Signs</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <input type="text" name="temperature" placeholder="Temperature (°C)" class="border p-2 rounded-lg">
+        <input type="text" name="pulse" placeholder="Pulse (bpm)" class="border p-2 rounded-lg">
+        <input type="text" name="bp" placeholder="BP (e.g. 120/80)" class="border p-2 rounded-lg">
+        <input type="text" name="weight" placeholder="Weight (kg)" class="border p-2 rounded-lg">
+      </div>
+
+      <button type="button" onclick="nextStep(4)" class="next-btn mt-4">Next</button>
+    </div>
+
+    <!-- STEP 5 -->
+    <div id="step-5" class="glass p-6 rounded-xl fade hidden-step">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Preferred Language *</h2>
+
+      <select name="language" required class="w-full border rounded-lg p-2">
+        <option value="" disabled selected>Select</option>
+        <option>English</option>
+        <option>Hindi</option>
+        <option>Marathi</option>
+      </select>
+
+      <button type="button" onclick="nextStep(5)" class="next-btn mt-4">Next</button>
+    </div>
+
+    <!-- STEP 6 -->
+    <div id="step-6" class="glass p-6 rounded-xl fade hidden-step">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">Upload Previous Report (Optional)</h2>
+
+      <input type="file" name="previousReport" accept="image/*,application/pdf"
+        class="w-full p-2 border rounded-lg bg-white cursor-pointer">
+
+      <p class="text-xs text-gray-600 mt-2">Supported: PDF, JPG, PNG.</p>
+
+      <button type="submit" class="next-btn mt-4 w-full">Generate Report</button>
+    </div>
+
+  </form>
+
+  <script>
+    function nextStep(step) {
+      document.getElementById(`step-${step}`).classList.add("hidden-step");
+      document.getElementById(`step-${step + 1}`).classList.remove("hidden-step");
+      document.getElementById(`step-${step + 1}`).classList.add("fade");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  </script>
+
+</body>
+
+</html>

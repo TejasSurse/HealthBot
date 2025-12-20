@@ -6,27 +6,24 @@
   <title>Health Report - <%= patient.name %></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f8fafc, #e0f2fe); }
     .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-    .btn-gradient { background: linear-gradient(to right, #2563eb, #0ea5e9); }
-    .btn-gradient:hover { background: linear-gradient(to right, #1d4ed8, #0284c7); }
     .fade-in { animation: fadeIn 0.8s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
+
 <body class="min-h-screen py-10 px-4">
 
-  <!-- MAIN REPORT CONTENT (FOR PDF) -->
   <div id="report-content" class="max-w-4xl mx-auto">
 
-    <!-- Header -->
     <div class="text-center mb-8 fade-in">
       <h1 class="text-4xl md:text-5xl font-bold text-blue-700">HealthBot Report</h1>
       <p class="text-gray-600 mt-2">AI-Powered Health Insights • For Informational Use Only</p>
     </div>
 
-    <!-- Report Card -->
     <div class="glass p-8 rounded-2xl fade-in">
 
       <!-- Patient Info -->
@@ -56,25 +53,25 @@
         <!-- Summary -->
         <div class="bg-blue-50 p-5 rounded-xl">
           <h3 class="font-semibold text-blue-900 mb-2">Summary</h3>
-          <p class="text-blue-800"><%= report.summary || "No summary available." %></p>
+          <p class="text-blue-800"><%= report.summary %></p>
         </div>
 
         <!-- Risk Level -->
         <div class="flex items-center gap-3">
           <span class="font-semibold text-gray-700">Risk Level:</span>
           <span class="px-4 py-1 rounded-full text-white text-sm font-bold
-            <%= report.riskLevel === 'High' ? 'bg-red-500' : 
+            <%= report.riskLevel === 'High' ? 'bg-red-500' :
                 report.riskLevel === 'Moderate' ? 'bg-orange-500' : 'bg-green-500' %>">
-            <%= report.riskLevel || "Unknown" %>
+            <%= report.riskLevel %>
           </span>
         </div>
 
-        <!-- Causes -->
+        <!-- Possible Causes -->
         <div>
           <h3 class="font-semibold text-gray-800 mb-2">Possible Causes</h3>
           <ul class="list-disc list-inside text-gray-700 space-y-1">
-            <% (report.possibleCauses || []).forEach(cause => { %>
-              <li><%= cause %></li>
+            <% (report.possibleCauses || []).forEach(c => { %>
+              <li><%= c %></li>
             <% }); %>
           </ul>
         </div>
@@ -99,14 +96,48 @@
           </div>
         </div>
 
+        <!-- ⭐ MEDICINE TIMING SECTION -->
+        <div>
+          <h3 class="font-semibold text-gray-800 mb-3">Medicine Dosage & Timing</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <% (report.tabletTiming || []).forEach(t => { %>
+              <div class="border rounded-lg p-4 bg-blue-50 shadow-sm">
+
+                <p><strong>Tablet:</strong> <%= t.tablet %></p>
+                <p><strong>Purpose:</strong> <%= t.purpose %></p>
+
+                <% if (t.morning) { %>
+                  <p><strong>Morning:</strong> <%= t.morning.dose %> — <%= t.morning.withFood %></p>
+                <% } %>
+
+                <% if (t.afternoon) { %>
+                  <p><strong>Afternoon:</strong> <%= t.afternoon.dose %> — <%= t.afternoon.withFood %></p>
+                <% } %>
+
+                <% if (t.night) { %>
+                  <p><strong>Night:</strong> <%= t.night.dose %> — <%= t.night.withFood %></p>
+                <% } %>
+
+                <% if (t.timing) { %>
+                  <p><strong>Timing:</strong> <%= t.timing %></p>
+                <% } %>
+
+                <p><strong>Notes:</strong> <%= t.notes %></p>
+
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
         <!-- Diet Plan -->
         <div>
           <h3 class="font-semibold text-gray-800 mb-3">7-Day Diet Plan</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <% Object.keys(report.dietPlan || {}).slice(0, 7).forEach(day => { %>
+            <% Object.keys(report.dietPlan || {}).forEach(day => { %>
               <div class="border rounded-lg p-3 bg-gray-50">
                 <div class="font-semibold text-blue-700"><%= day.toUpperCase() %></div>
-                <div class="mt-1 space-y-1 text-gray-600">
+                <div class="space-y-1 text-gray-600">
                   <div><strong>Breakfast:</strong> <%= report.dietPlan[day].breakfast %></div>
                   <div><strong>Lunch:</strong> <%= report.dietPlan[day].lunch %></div>
                   <div><strong>Dinner:</strong> <%= report.dietPlan[day].dinner %></div>
@@ -125,30 +156,21 @@
             <% }); %>
           </ul>
         </div>
-      </section>
 
+      </section>
     </div>
   </div>
 
-  <!-- ACTION BUTTONS (Outside PDF) -->
-  <div class="text-center mt-8 space-x-4">
-    <!-- Download Button -->
-
-    
+  <div class="text-center mt-8">
     <a href="/" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-8 py-3 rounded-lg font-semibold shadow-md transition hover:scale-105">
       New Report
     </a>
   </div>
 
-  <!-- DISCLAIMER (NOT IN PDF) -->
   <div class="max-w-4xl mx-auto mt-10 bg-amber-50 border border-amber-200 text-amber-900 p-6 rounded-lg text-sm text-center">
     <strong>Important:</strong> This AI-generated report is for <u>informational purposes only</u>. 
-    It is <strong>not a substitute</strong> for professional medical advice. 
-    Always consult a qualified doctor before acting on any health information.
+    Always consult a qualified doctor before taking any medication.
   </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin View Report - <%= name %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f8fafc, #e0f2fe); }
+    .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.8s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+
+<body class="min-h-screen py-10 px-4">
+
+  <div class="max-w-4xl mx-auto mb-4">
+    <a href="/admin/dashboard" class="text-blue-600 hover:underline text-sm">&larr; Back to Dashboard</a>
+  </div>
+
+  <div id="report-content" class="max-w-4xl mx-auto">
+
+    <div class="text-center mb-8 fade-in">
+      <h1 class="text-4xl md:text-5xl font-bold text-blue-700">HealthBot Report</h1>
+      <p class="text-gray-600 mt-2">AI-Powered Health Insights • Admin View</p>
+
+      <p class="text-gray-500 text-sm mt-1">
+        Created at: <%= created %>
+      </p>
+    </div>
+
+    <div class="glass p-8 rounded-2xl fade-in">
+
+      <!-- Patient Info -->
+      <section class="mb-8 border-b pb-6">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-4">Patient Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+          <p><strong>Name:</strong> <%= name %></p>
+          <p><strong>Gender:</strong> <%= report.gender || "Unknown" %></p>
+          <p><strong>Age:</strong> <%= report.age || "Unknown" %></p>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Summary</h2>
+        <div class="bg-blue-50 p-5 rounded-xl text-blue-900">
+          <%= report.summary %>
+        </div>
+      </section>
+
+      <!-- Risk -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Risk Level</h2>
+        <span class="px-4 py-2 rounded-full text-white text-sm font-bold
+          <%= report.riskLevel === 'High' ? 'bg-red-500' :
+              report.riskLevel === 'Moderate' ? 'bg-orange-500' :
+              'bg-green-500' %>">
+          <%= report.riskLevel %>
+        </span>
+      </section>
+
+      <!-- Possible Causes -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Possible Causes</h2>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <% (report.possibleCauses || []).forEach(c => { %>
+            <li><%= c %></li>
+          <% }); %>
+        </ul>
+      </section>
+
+      <!-- Precautions -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Precautions</h2>
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          <% (report.precautions || []).forEach(p => { %>
+            <li><%= p %></li>
+          <% }); %>
+        </ul>
+      </section>
+
+      <!-- Safe Medicines -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Safe OTC Medications</h2>
+        <div class="flex flex-wrap gap-2">
+          <% (report.safeMedications || []).forEach(m => { %>
+            <span class="px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-sm">
+              <%= m %>
+            </span>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- Tablet Timing -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Medicine Timing</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% (report.tabletTiming || []).forEach(t => { %>
+            <div class="border rounded-lg p-4 bg-blue-50 shadow-sm">
+              <p><strong>Tablet:</strong> <%= t.tablet %></p>
+              <p><strong>Purpose:</strong> <%= t.purpose %></p>
+
+              <% if (t.morning) { %>
+                <p><strong>Morning:</strong> <%= t.morning.dose %> — <%= t.morning.withFood %></p>
+              <% } %>
+
+              <% if (t.afternoon) { %>
+                <p><strong>Afternoon:</strong> <%= t.afternoon.dose %> — <%= t.afternoon.withFood %></p>
+              <% } %>
+
+              <% if (t.night) { %>
+                <p><strong>Night:</strong> <%= t.night.dose %> — <%= t.night.withFood %></p>
+              <% } %>
+
+              <p><strong>Notes:</strong> <%= t.notes %></p>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- Diet Plan -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">7-Day Diet Plan</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <% Object.keys(report.dietPlan || {}).forEach(day => { %>
+            <div class="border rounded-lg p-3 bg-gray-50">
+              <div class="font-semibold text-blue-700"><%= day.toUpperCase() %></div>
+              <div class="space-y-1 text-gray-600">
+                <div><strong>Breakfast:</strong> <%= report.dietPlan[day].breakfast %></div>
+                <div><strong>Lunch:</strong> <%= report.dietPlan[day].lunch %></div>
+                <div><strong>Dinner:</strong> <%= report.dietPlan[day].dinner %></div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- Next Steps -->
+      <section>
+        <h2 class="text-2xl font-semibold text-blue-800 mb-3">Next Steps</h2>
+        <ul class="list-decimal list-inside text-gray-700 space-y-1">
+          <% (report.nextSteps || []).forEach(step => { %>
+            <li><%= step %></li>
+          <% }); %>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>
